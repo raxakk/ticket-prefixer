@@ -1,0 +1,36 @@
+<idea-plugin>
+    <!-- Immutable once published to the JetBrains Marketplace. -->
+    <id>io.github.raxakk.ticketstamp</id>
+
+    <!-- name, version, vendor, description and idea-version are patched in by
+         the Gradle plugin from build.gradle.kts. -->
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+                serviceImplementation="io.github.raxakk.ticketstamp.TicketStampSettings"/>
+
+        <applicationConfigurable
+                instance="io.github.raxakk.ticketstamp.TicketStampConfigurable"
+                displayName="TicketStamp"
+                id="io.github.raxakk.ticketstamp.settings"
+                parentId="vcs"/>
+
+        <notificationGroup
+                id="TicketStamp"
+                displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <action
+                id="TicketStamp.InsertTicket"
+                class="io.github.raxakk.ticketstamp.TicketStampAction"
+                text="Insert Ticket Number from Branch"
+                description="Prepends the ticket number from the current Git branch to the commit message"
+                icon="AllIcons.Vcs.Branch">
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
