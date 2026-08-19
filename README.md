@@ -7,8 +7,8 @@ Prepends the ticket number from your Git branch to the IntelliJ commit message.
 TicketStamp adds a button to the commit toolbar — the small row of icons next to the
 commit message field, in both the Commit tool window and the commit dialog.
 
-Pressing it reads the current Git branch, extracts the ticket number and prepends it
-to whatever you have already typed:
+Pressing it reads the current Git branch, extracts the ticket number and writes it into
+the commit message. Out of the box it prepends:
 
 | Branch | Commit message becomes |
 | --- | --- |
@@ -17,26 +17,51 @@ to whatever you have already typed:
 | `bugfix/123456789_branch_name`  | `#123456789: your message` |
 | `123456789-branch-name`         | `#123456789: your message` |
 
-The insertion is a normal undoable edit, so <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>Z</kbd>
-reverts it. Pressing the button twice does nothing the second time — the prefix is only
-added if it is not already there.
+Both the pattern used to find the number and the way it is written into the message are
+configurable — see below.
 
 ## Configuration
 
 **Settings → Version Control → TicketStamp**
 
-The prefix format defaults to `#{ticket}:`, where `{ticket}` is replaced by the number
-found in the branch. Change it to whatever your team uses, for example `{ticket} -` or
-`[{ticket}]`.
+Both halves of the job are configurable, and a **Restore Defaults** button puts them back.
 
-## How the ticket number is detected
+### Branch pattern
 
-The number has to form a complete segment of the branch name, delimited by `/`, `-`, `_`
-or the start/end of the name, and must be at least four digits long. That minimum keeps
-segments like `v2` or `fix-3` from being mistaken for a ticket number.
+The regular expression matched against the branch name. If it declares a capturing
+group, the first non-empty group is the ticket number; without a group the whole match
+is used.
 
-Names without a standalone number — `main`, `feature/branch-name`, `feature/abc1234-name` —
-produce a notification instead of a change to the message.
+```
+(?:^|[/\-_])(\d{4,})(?=[/\-_]|$)     # default
+PROJ-(\d+)                            # JIRA-style keys -> 4711 from PROJ-4711
+PROJ-\d+                              # no group -> the whole key, PROJ-4711
+```
+
+The default requires the number to form a complete segment of the branch name,
+delimited by `/`, `-`, `_` or the start/end of the name, and to be at least four digits
+long — which keeps segments like `v2` or `fix-3` from being mistaken for a ticket.
+
+An invalid expression is rejected when you press *Apply*, so it cannot break the button.
+
+### Message template
+
+Controls where the ticket lands. `{ticket}` is the extracted number, `{message}` is the
+text already in the field:
+
+| Template | `fix login` becomes |
+| --- | --- |
+| `#{ticket}: {message}` *(default)* | `#123456789: fix login` |
+| `{message} (#{ticket})` | `fix login (#123456789)` |
+| `[{ticket}] {message}` | `[123456789] fix login` |
+| `#{ticket}:` | `#123456789: fix login` |
+
+A template without `{message}` is treated as a plain prefix, so the last two rows behave
+identically.
+
+The insertion is a normal undoable edit, so <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>Z</kbd>
+reverts it, and the caret stays where you left it. Pressing the button twice does nothing
+the second time.
 
 ## Requirements
 

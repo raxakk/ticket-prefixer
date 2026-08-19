@@ -12,7 +12,7 @@ import git4idea.branch.GitBranchUtil
 import git4idea.repo.GitRepositoryManager
 
 /**
- * Prepends the ticket number of the current Git branch to the commit message.
+ * Writes the ticket number of the current Git branch into the commit message.
  *
  * Registered in `Vcs.MessageActionGroup`, i.e. the small toolbar next to the
  * commit message field in both the Commit tool window and the commit dialog.
@@ -29,6 +29,17 @@ class TicketStampAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val document = e.getData(VcsDataKeys.COMMIT_MESSAGE_DOCUMENT) ?: return
+        val settings = TicketStampSettings.getInstance().state
+
+        if (!TicketExtractor.isValidPattern(settings.branchPattern)) {
+            notify(
+                project,
+                "Invalid branch pattern",
+                "'${settings.branchPattern}' is not a valid regular expression. " +
+                    "Fix it in Settings | Version Control | TicketStamp."
+            )
+            return
+        }
 
         val branchName = currentBranchName(project, e)
         if (branchName == null) {
@@ -36,25 +47,29 @@ class TicketStampAction : AnAction() {
             return
         }
 
-        val ticket = TicketExtractor.extract(branchName)
+        val ticket = TicketExtractor.extract(branchName, settings.branchPattern)
         if (ticket == null) {
             notify(
                 project,
                 "No ticket number found",
-                "The branch '$branchName' does not contain a ticket number."
+                "The branch '$branchName' does not match the configured pattern."
             )
             return
         }
 
-        val prefix = TicketStampSettings.getInstance().state.formatPattern
-            .replace(TicketStampSettings.TICKET_PLACEHOLDER, ticket)
+        val (before, after) = MessageTemplate.render(settings.messageTemplate, ticket)
+        val text = document.text
 
-        if (document.text.trimStart().startsWith(prefix)) return
+        val alreadyStamped = (before.isEmpty() || text.startsWith(before)) &&
+            (after.isEmpty() || text.endsWith(after))
+        if (alreadyStamped) return
 
-        // Going through the document (rather than CommitMessageI.setCommitMessage)
-        // keeps the caret in place and makes the insertion undoable.
+        // Going through the document (rather than CommitMessageI.setCommitMessage) keeps
+        // the caret in place and makes the insertion undoable. Appending first keeps the
+        // offset for the leading part valid.
         WriteCommandAction.runWriteCommandAction(project, "Insert Ticket Number", null, {
-            document.insertString(0, "$prefix ")
+            if (after.isNotEmpty()) document.insertString(document.textLength, after)
+            if (before.isNotEmpty()) document.insertString(0, before)
         })
     }
 

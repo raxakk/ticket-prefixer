@@ -14,7 +14,11 @@ import com.intellij.openapi.components.Storage
 class TicketStampSettings : PersistentStateComponent<TicketStampSettings.State> {
 
     class State {
-        var formatPattern: String = DEFAULT_FORMAT_PATTERN
+        /** Regex applied to the branch name to find the ticket number. */
+        var branchPattern: String = TicketExtractor.DEFAULT_BRANCH_PATTERN
+
+        /** Template controlling how the ticket is written into the commit message. */
+        var messageTemplate: String = MessageTemplate.DEFAULT
     }
 
     private var myState = State()
@@ -26,11 +30,6 @@ class TicketStampSettings : PersistentStateComponent<TicketStampSettings.State> 
     }
 
     companion object {
-        const val DEFAULT_FORMAT_PATTERN: String = "#{ticket}:"
-
-        /** Placeholder replaced by the extracted ticket number. */
-        const val TICKET_PLACEHOLDER: String = "{ticket}"
-
         fun getInstance(): TicketStampSettings =
             ApplicationManager.getApplication().getService(TicketStampSettings::class.java)
     }

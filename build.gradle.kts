@@ -53,8 +53,10 @@ intellijPlatform {
             <code>feature/123456789/branch-name</code> become a commit message starting
             with <code>#123456789:</code>.
             <br><br>
-            The prefix format is configurable, so <code>#{ticket}:</code> can be changed
-            to whatever your team uses.
+            Both halves are configurable: the regular expression used to find the number
+            in the branch name, and a template controlling where it lands — so
+            <code>#{ticket}: {message}</code> prepends while
+            <code>{message} (#{ticket})</code> appends.
         """.trimIndent()
 
         changeNotes = "Initial release."
