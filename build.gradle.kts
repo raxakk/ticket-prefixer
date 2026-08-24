@@ -35,6 +35,8 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+val publishToken = providers.environmentVariable("PUBLISH_TOKEN")
+
 intellijPlatform {
     pluginConfiguration {
         name = "Ticket Prefixer"
@@ -91,6 +93,33 @@ intellijPlatform {
             untilBuild = provider { null }
         }
     }
+
+    signing {
+        certificateChainFile =
+            layout.file(providers.environmentVariable("CERTIFICATE_CHAIN_FILE").map { file(it) })
+        privateKeyFile =
+            layout.file(providers.environmentVariable("PRIVATE_KEY_FILE").map { file(it) })
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
+    }
+
+    publishing {
+        token = publishToken
+        // Uploads land on the stable channel, which is what the plugin page serves.
+        channels = listOf("default")
+    }
+}
+
+val requirePublishToken by tasks.registering {
+    doLast {
+        check(publishToken.isPresent) {
+            "PUBLISH_TOKEN is not set. publishPlugin would skip itself and report " +
+                    "BUILD SUCCESSFUL without uploading anything."
+        }
+    }
+}
+
+tasks.named("publishPlugin") {
+    dependsOn(requirePublishToken)
 }
 
 tasks.test {
