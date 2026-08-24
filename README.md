@@ -20,6 +20,22 @@ the commit message. Out of the box it prepends:
 Both the pattern used to find the number and the way it is written into the message are
 configurable — see below.
 
+## Works with AI-generated commit messages
+
+Copilot and the other assistants that generate a commit message replace the entire
+contents of the message field. Anything already in there is gone — including a ticket
+number, which is a [long-standing complaint](https://github.com/orgs/community/discussions/185707)
+among people who work with issue keys.
+
+That is why this is a button rather than something automatic. Plugins that fill the ticket
+in when the commit dialog opens write it before the assistant runs, so the generated
+message overwrites it. Here the order is yours to pick:
+
+1. Let the assistant write the message.
+2. Press the button.
+
+Because nothing else touches the field afterwards, the ticket survives to the commit.
+
 ## Configuration
 
 **Settings → Version Control → Ticket Prefixer**
