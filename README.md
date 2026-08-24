@@ -1,10 +1,10 @@
-# TicketStamp
+# Ticket Prefixer
 
 Prepends the ticket number from your Git branch to the IntelliJ commit message.
 
 ## What it does
 
-TicketStamp adds a button to the commit toolbar — the small row of icons next to the
+Ticket Prefixer adds a button to the commit toolbar — the small row of icons next to the
 commit message field, in both the Commit tool window and the commit dialog.
 
 Pressing it reads the current Git branch, extracts the ticket number and writes it into
@@ -22,7 +22,7 @@ configurable — see below.
 
 ## Configuration
 
-**Settings → Version Control → TicketStamp**
+**Settings → Version Control → Ticket Prefixer**
 
 Both halves of the job are configurable, and a **Restore Defaults** button puts them back.
 

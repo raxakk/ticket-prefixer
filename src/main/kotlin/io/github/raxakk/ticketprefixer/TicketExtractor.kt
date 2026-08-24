@@ -1,4 +1,4 @@
-package io.github.raxakk.ticketstamp
+package io.github.raxakk.ticketprefixer
 
 /**
  * Extracts the ticket number from a Git branch name using a user-supplied regex.

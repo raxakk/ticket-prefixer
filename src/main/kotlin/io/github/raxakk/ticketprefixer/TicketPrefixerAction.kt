@@ -1,4 +1,4 @@
-package io.github.raxakk.ticketstamp
+package io.github.raxakk.ticketprefixer
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
@@ -17,7 +17,7 @@ import git4idea.repo.GitRepositoryManager
  * Registered in `Vcs.MessageActionGroup`, i.e. the small toolbar next to the
  * commit message field in both the Commit tool window and the commit dialog.
  */
-class TicketStampAction : AnAction() {
+class TicketPrefixerAction : AnAction() {
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
@@ -29,14 +29,14 @@ class TicketStampAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val document = e.getData(VcsDataKeys.COMMIT_MESSAGE_DOCUMENT) ?: return
-        val settings = TicketStampSettings.getInstance().state
+        val settings = TicketPrefixerSettings.getInstance().state
 
         if (!TicketExtractor.isValidPattern(settings.branchPattern)) {
             notify(
                 project,
                 "Invalid branch pattern",
                 "'${settings.branchPattern}' is not a valid regular expression. " +
-                    "Fix it in Settings | Version Control | TicketStamp."
+                    "Fix it in Settings | Version Control | Ticket Prefixer."
             )
             return
         }
@@ -91,6 +91,6 @@ class TicketStampAction : AnAction() {
     }
 
     private companion object {
-        const val NOTIFICATION_GROUP_ID = "TicketStamp"
+        const val NOTIFICATION_GROUP_ID = "Ticket Prefixer"
     }
 }

@@ -1,4 +1,4 @@
-package io.github.raxakk.ticketstamp
+package io.github.raxakk.ticketprefixer
 
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
@@ -11,12 +11,12 @@ import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class TicketStampConfigurable : Configurable {
+class TicketPrefixerConfigurable : Configurable {
 
     private var branchPatternField: JBTextField? = null
     private var messageTemplateField: JBTextField? = null
 
-    override fun getDisplayName(): String = "TicketStamp"
+    override fun getDisplayName(): String = "Ticket Prefixer"
 
     override fun createComponent(): JComponent {
         val branchField = JBTextField().also { branchPatternField = it }
@@ -60,7 +60,7 @@ class TicketStampConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val state = TicketStampSettings.getInstance().state
+        val state = TicketPrefixerSettings.getInstance().state
         return branchPatternField?.text != state.branchPattern ||
             messageTemplateField?.text != state.messageTemplate
     }
@@ -81,13 +81,13 @@ class TicketStampConfigurable : Configurable {
             )
         }
 
-        val state = TicketStampSettings.getInstance().state
+        val state = TicketPrefixerSettings.getInstance().state
         state.branchPattern = branchPattern
         state.messageTemplate = messageTemplate
     }
 
     override fun reset() {
-        val state = TicketStampSettings.getInstance().state
+        val state = TicketPrefixerSettings.getInstance().state
         branchPatternField?.text = state.branchPattern
         messageTemplateField?.text = state.messageTemplate
     }

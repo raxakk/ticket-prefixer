@@ -1,4 +1,4 @@
-package io.github.raxakk.ticketstamp
+package io.github.raxakk.ticketprefixer
 
 /**
  * Renders the template that controls how the ticket is written into the commit message.

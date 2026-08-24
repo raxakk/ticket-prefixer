@@ -1,4 +1,4 @@
-package io.github.raxakk.ticketstamp
+package io.github.raxakk.ticketprefixer
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

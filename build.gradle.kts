@@ -37,7 +37,7 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        name = "TicketStamp"
+        name = "Ticket Prefixer"
         version = project.version.toString()
 
         vendor {

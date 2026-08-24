@@ -1,5 +1,7 @@
 <idea-plugin>
-    <!-- Immutable once published to the JetBrains Marketplace. -->
+    <!-- Immutable once published to the JetBrains Marketplace. It still carries the
+         plugin's original name, TicketStamp; changing it would make this a different
+         plugin and cut the existing installations off from updates. -->
     <id>io.github.raxakk.ticketstamp</id>
 
     <!-- name, version, vendor, description and idea-version are patched in by
@@ -10,23 +12,25 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
-                serviceImplementation="io.github.raxakk.ticketstamp.TicketStampSettings"/>
+                serviceImplementation="io.github.raxakk.ticketprefixer.TicketPrefixerSettings"/>
 
         <applicationConfigurable
-                instance="io.github.raxakk.ticketstamp.TicketStampConfigurable"
-                displayName="TicketStamp"
+                instance="io.github.raxakk.ticketprefixer.TicketPrefixerConfigurable"
+                displayName="Ticket Prefixer"
                 id="io.github.raxakk.ticketstamp.settings"
                 parentId="vcs"/>
 
         <notificationGroup
-                id="TicketStamp"
+                id="Ticket Prefixer"
                 displayType="BALLOON"/>
     </extensions>
 
     <actions>
+        <!-- Kept from the original name so that keyboard shortcuts users have assigned
+             to this action survive the rename. -->
         <action
                 id="TicketStamp.InsertTicket"
-                class="io.github.raxakk.ticketstamp.TicketStampAction"
+                class="io.github.raxakk.ticketprefixer.TicketPrefixerAction"
                 text="Insert Ticket Number from Branch"
                 description="Prepends the ticket number from the current Git branch to the commit message"
                 icon="AllIcons.Vcs.Branch">

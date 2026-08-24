@@ -1,1 +1,1 @@
-rootProject.name = "ticket-stamp"
+rootProject.name = "ticket-prefixer"
