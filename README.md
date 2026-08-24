@@ -60,8 +60,22 @@ A template without `{message}` is treated as a plain prefix, so the last two row
 identically.
 
 The insertion is a normal undoable edit, so <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>Z</kbd>
-reverts it, and the caret stays where you left it. Pressing the button twice does nothing
-the second time.
+reverts it, and the caret stays where you left it.
+
+The button also recognises a ticket that is already there in a different format, which is
+what a generated message usually contains:
+
+| Commit message | Pressing the button |
+| --- | --- |
+| `fix login` | `#123456789: fix login` |
+| `123456789: fix login` | `#123456789: fix login` — the reference is rewritten |
+| `[123456789] fix login` | `#123456789: fix login` |
+| `#123456789: fix login` | nothing, it is already in shape |
+| `fix login, refs 123456789` | nothing — moving the number would mangle the sentence |
+| `bump timeout to 1234567890` | `#123456789: bump timeout to 1234567890` |
+
+The last row is the point of the boundary check: `123456789` is only part of `1234567890`,
+so it does not count as present. The same goes for `v123456789`.
 
 ## Requirements
 

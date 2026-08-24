@@ -60,14 +60,22 @@ class TicketPrefixerAction : AnAction() {
         val (before, after) = MessageTemplate.render(settings.messageTemplate, ticket)
         val text = document.text
 
-        val alreadyStamped = (before.isEmpty() || text.startsWith(before)) &&
-            (after.isEmpty() || text.endsWith(after))
-        if (alreadyStamped) return
+        // An AI-generated message often opens with the ticket in its own format, because
+        // it picked the number off the branch name. That leading run gets swapped for the
+        // configured rendering; a mention deeper in the text is left alone instead, since
+        // moving it to the front would mangle the sentence around it.
+        val leadingReference = MessageTemplate.leadingTicketReferenceLength(text, ticket)
+        if (leadingReference == 0 && MessageTemplate.mentionsTicket(text, ticket)) return
+
+        // Covers the message already being in exactly the configured shape, which is what
+        // makes a second press a no-op.
+        if (before + text.substring(leadingReference) + after == text) return
 
         // Going through the document (rather than CommitMessageI.setCommitMessage) keeps
-        // the caret in place and makes the insertion undoable. Appending first keeps the
-        // offset for the leading part valid.
+        // the caret in place and makes the edit undoable. Appending before prepending
+        // keeps the offset for the leading part valid.
         WriteCommandAction.runWriteCommandAction(project, "Insert Ticket Number", null, {
+            if (leadingReference > 0) document.deleteString(0, leadingReference)
             if (after.isNotEmpty()) document.insertString(document.textLength, after)
             if (before.isNotEmpty()) document.insertString(0, before)
         })
