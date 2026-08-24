@@ -24,7 +24,28 @@ configurable — see below.
 
 **Settings → Version Control → Ticket Prefixer**
 
-Both halves of the job are configurable, and a **Restore Defaults** button puts them back.
+Both halves of the job are configurable, and two preset buttons fill them in for the
+schemes most people are on.
+
+### Presets
+
+| Preset | Branch | Commit message becomes |
+| --- | --- | --- |
+| **Numeric** *(default)* | `feature/12345678-name` | `#12345678: message` |
+| **Jira** | `feature/PROJ-1234-name` | `PROJ-1234: message` |
+
+A preset only fills the two fields below; they stay editable afterwards, so it is a
+starting point rather than a mode. **Numeric** doubles as the way back to the shipped
+defaults.
+
+Reach for **Jira** if your branches carry project keys. The numeric default does not fail
+on them — it matches and quietly throws the key away, turning `feature/PROJ-1234-name`
+into `#1234: message` rather than `PROJ-1234: message`. That silent half-right result is
+what the preset exists to avoid.
+
+The Jira preset matches upper-case keys only. A case-insensitive version would read
+`fix-1234` in `feature/fix-1234-login` as a project key; if your branches really do carry
+lower-case keys, put `(?i)` in front of the pattern yourself.
 
 ### Branch pattern
 

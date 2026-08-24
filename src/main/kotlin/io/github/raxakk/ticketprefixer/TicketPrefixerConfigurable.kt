@@ -7,6 +7,8 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import java.awt.FlowLayout
+import javax.swing.Box
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -22,10 +24,19 @@ class TicketPrefixerConfigurable : Configurable {
         val branchField = JBTextField().also { branchPatternField = it }
         val templateField = JBTextField().also { messageTemplateField = it }
 
-        val restoreDefaults = JButton("Restore Defaults").apply {
-            addActionListener {
-                branchField.text = TicketExtractor.DEFAULT_BRANCH_PATTERN
-                templateField.text = MessageTemplate.DEFAULT
+        val presets = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
+            isOpaque = false
+            Preset.entries.forEachIndexed { index, preset ->
+                if (index > 0) add(Box.createHorizontalStrut(JBUI.scale(8)))
+                add(
+                    JButton(preset.label).apply {
+                        toolTipText = preset.example
+                        addActionListener {
+                            branchField.text = preset.branchPattern
+                            templateField.text = preset.messageTemplate
+                        }
+                    }
+                )
             }
         }
 
@@ -49,7 +60,14 @@ class TicketPrefixerConfigurable : Configurable {
                         "Without <code>{message}</code> the template is used as a plain prefix."
                 )
             )
-            .addComponent(restoreDefaults)
+            .addLabeledComponent("Presets:", presets, 1, false)
+            .addComponentToRightColumn(
+                hint(
+                    Preset.entries.joinToString("<br>") {
+                        "<b>${it.label}</b> — ${it.example}"
+                    } + "<br>A preset fills both fields above; they stay editable afterwards."
+                )
+            )
             .addComponentFillVertically(JPanel(), 0)
             .panel
     }
