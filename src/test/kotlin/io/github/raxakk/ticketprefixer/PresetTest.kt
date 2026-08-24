@@ -38,6 +38,14 @@ class PresetTest {
     }
 
     @Test
+    fun `fresh settings start on the default preset`() {
+        val state = TicketPrefixerSettings.State()
+
+        assertEquals(Preset.DEFAULT.branchPattern, state.branchPattern)
+        assertEquals(Preset.DEFAULT.messageTemplate, state.messageTemplate)
+    }
+
+    @Test
     fun `numeric preset reads an all-digit id`() {
         assertEquals("12345678", extract(Preset.NUMERIC, "feature/12345678-fix-login"))
         assertEquals("12345678", extract(Preset.NUMERIC, "feature/12345678/fix-login"))

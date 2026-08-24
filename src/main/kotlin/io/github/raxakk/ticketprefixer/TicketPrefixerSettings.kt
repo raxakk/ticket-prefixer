@@ -18,10 +18,10 @@ class TicketPrefixerSettings : PersistentStateComponent<TicketPrefixerSettings.S
 
     class State {
         /** Regex applied to the branch name to find the ticket number. */
-        var branchPattern: String = TicketExtractor.DEFAULT_BRANCH_PATTERN
+        var branchPattern: String = Preset.DEFAULT.branchPattern
 
         /** Template controlling how the ticket is written into the commit message. */
-        var messageTemplate: String = MessageTemplate.DEFAULT
+        var messageTemplate: String = Preset.DEFAULT.messageTemplate
     }
 
     private var myState = State()
